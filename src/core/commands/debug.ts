@@ -16,8 +16,8 @@ export default () => <ApplicationCommand>{
     execute([ephemeral], ctx) {
         const info = getDebugInfo();
         const content = [
-            "**Vencore Debug Info**",
-            `> Vencore: 1.4.0-3 DEV ${info.bunny.version} (${info.bunny.loader.name} ${info.bunny.loader.version})`,
+            "**Voxi Debug Info**",
+            `> Voxi: ${info.bunny.version} (${info.bunny.loader.name} ${info.bunny.loader.version})`,
             `> Discord: ${info.discord.version} (${info.discord.build})`,
             `> React: ${info.react.version} (RN ${info.react.nativeVersion})`,
             `> Hermes: ${info.hermes.version} (bcv${info.hermes.bytecodeVersion})`,

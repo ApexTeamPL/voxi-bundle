@@ -18,9 +18,9 @@ async function initializeRevenge() {
 
         console.log(stack ?? e?.toString?.() ?? e);
         alert([
-            "Failed to load Vencore!\n",
+            "Failed to load Voxi!\n",
             `Build Number: ${ClientInfoManager.getConstants().Build}`,
-            `Vencore: ${version}`,
+            `Voxi: ${version}`,
             stack || e?.toString?.(),
         ].join("\n"));
     }
@@ -43,10 +43,10 @@ if (typeof window.__r === "undefined") {
     const unpatches: Array<() => void> = [];
 
     const deferMethodExecution = (
-        object: any, 
-        method: string, 
-        condition?: (...args: any[]) => boolean, 
-        resume?: (queue: DeferredQueue) => void, 
+        object: any,
+        method: string,
+        condition?: (...args: any[]) => boolean,
+        resume?: (queue: DeferredQueue) => void,
         returnWith?: (queue: DeferredQueue) => any
     ) => {
         const restore = instead(method, object, function (this: any, args: any[], original: any) {
@@ -103,7 +103,7 @@ if (typeof window.__r === "undefined") {
 
         const startDiscord = async () => {
             await initializeRevenge();
-            
+
             for (const unpatch of unpatches) unpatch();
             unpatches.length = 0;
 

@@ -1,4 +1,4 @@
-// Not really used in main Vencore builds!
+// Not really used in main Voxi builds!
 import {
   deleteRepository,
   installPlugin,

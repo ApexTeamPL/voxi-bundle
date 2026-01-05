@@ -31,7 +31,7 @@ let context = null;
 const config = {
     entryPoints: ["src/entry.ts"],
     bundle: true,
-    outfile: "dist/vencore.js",
+    outfile: "dist/voxi.js",
     format: "iife",
     splitting: false,
     external: [
@@ -43,7 +43,7 @@ const config = {
         "const-and-let": false
     },
     footer: {
-        js: "//# sourceURL=vencore"
+        js: "//# sourceURL=voxi"
     },
     loader: {
         ".png": "dataurl",
@@ -78,7 +78,7 @@ const config = {
                                 constModules: {
                                     globals: {
                                         "bunny-build-info": {
-                                            version: `"${context.hash}-${releaseBranch ?? "local"}"`
+                                            version: `"v1.4.1${releaseBranch ?? "local"}"`
                                         }
                                     }
                                 },
