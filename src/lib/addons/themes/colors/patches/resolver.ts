@@ -22,6 +22,8 @@ const SEMANTIC_FALLBACK_MAP: Record<string, string> = {
     "BG_SURFACE_RAISED": "BACKGROUND_MOBILE_PRIMARY"
 };
 
+const origRawColor = { ...tokenReference.RawColor };
+
 export default function patchDefinitionAndResolver() {
     const callback = ([theme]: any[]) => theme === _colorRef.key ? [_colorRef.current!.reference] : void 0;
 
@@ -31,7 +33,9 @@ export default function patchDefinitionAndResolver() {
             enumerable: true,
             get: () => {
                 const ret = _colorRef.current?.raw[key];
-                return ret || _colorRef.origRaw[key];
+                if (ret) return ret;
+
+                return origRawColor[key];
             }
         });
     });
@@ -68,11 +72,10 @@ export default function patchDefinitionAndResolver() {
             return orig(...args);
         }),
         () => {
-            // Not the actual module but.. yeah.
             Object.defineProperty(tokenReference, "RawColor", {
                 configurable: true,
                 writable: true,
-                value: _colorRef.origRaw
+                value: origRawColor
             });
         }
     ];
