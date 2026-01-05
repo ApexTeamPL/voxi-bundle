@@ -118,6 +118,7 @@
     "TOASTS_PLUGIN_UPDATE": "{update, select, true {Enabled} other {Disabled}} updates for {name}",
     "UH_OH": "Uh Oh",
     "UNINSTALL_TITLE": "Uninstall {title}",
+    "UNINSTALL": "Uninstall",
     "URL_PLACEHOLDER": "https://github.com/ApexTeamPL",
     "VERSION": "Version",
     "VERSIONS": "Versions"
