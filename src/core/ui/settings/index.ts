@@ -42,6 +42,12 @@ export default function initSettings() {
                 usePredicate: () => isFontSupported()
             },
             {
+                key: "BUNNY_BROWSER",
+                title: () => "Addons Browser",
+                icon: findAssetId("BrowserIcon"),
+                render: () => import("@core/ui/settings/pages/PluginBrowser"),
+            },
+            {
                 key: "BUNNY_DEVELOPER",
                 title: () => Strings.DEVELOPER,
                 icon: findAssetId("WrenchIcon"),

@@ -74,17 +74,17 @@ export function patchTabsUI(unpatches: (() => void | boolean)[]) {
     try{
         unpatches.push(after("createList", createListModule, function(args, ret) {
             const [config] = args;
-        
+
             if (config?.sections && Array.isArray(config.sections)) {
                 const sections = config.sections;
-            
+
                 const accountSectionIndex = sections.findIndex((i: any) => i.settings?.includes("ACCOUNT"));
-            
+
                 if (accountSectionIndex !== -1) {
                     // Credit to @palmdevs - https://discord.com/channels/1196075698301968455/1243605828783571024/1307940348378742816
 
                     let index = accountSectionIndex + 1;
-                
+
                     Object.keys(registeredSections).forEach(sect => {
                         const alreadyExists = sections.some((s: any) => s.label === sect);
                         if (!alreadyExists) {

@@ -2,7 +2,6 @@ import { getCorePlugins } from "@core/plugins";
 import { readFile, removeFile, writeFile } from "@lib/api/native/fs";
 import { awaitStorage, createStorage, getPreloadedStorage, preloadStorageIfExists, purgeStorage, updateStorage } from "@lib/api/storage";
 import { safeFetch } from "@lib/utils";
-import { OFFICIAL_PLUGINS_REPO_URL } from "@lib/utils/constants";
 import { semver } from "@metro/common";
 
 import { createBunnyPluginApi } from "./api";
@@ -185,33 +184,6 @@ export async function updateRepository(repoUrl: string) {
 }
 
 /**
- * Deletes a repository from registrations and uninstalls ALL plugins under this repository
-*/
-export async function deleteRepository(repoUrl: string) {
-    assert(repoUrl !== OFFICIAL_PLUGINS_REPO_URL, repoUrl, "delete the official repository");
-    assert(pluginRepositories[repoUrl], repoUrl, "delete a non-registered repository");
-
-    const promQueues = [] as Promise<unknown>[];
-
-    for (const [id, manifest] of registeredPlugins) {
-        if (!isExternalPlugin(manifest) || manifest.parentRepository !== repoUrl) continue;
-
-        // Uninstall
-        if (isPluginInstalled(id)) {
-            promQueues.push(uninstallPlugin(id));
-        }
-
-        // Deregister all plugins under this repository
-        promQueues.push(purgeStorage(`plugins/manifests/${id}.json`));
-        registeredPlugins.delete(id);
-    }
-
-    delete pluginRepositories[repoUrl];
-    await Promise.all(promQueues);
-    updateAllRepository();
-}
-
-/**
  * Enablea a plugin. The plugin must have been declared as installed.
  * @param id The installed plugin ID
  * @param start Whether to start the plugin
@@ -346,20 +318,6 @@ export function stopPlugin(id: string) {
     pluginInstances.delete(id);
 }
 
-export async function updateAllRepository() {
-    try {
-        await updateRepository(OFFICIAL_PLUGINS_REPO_URL);
-    } catch (error) {
-        console.error("Failed to update official plugins repository", error);
-    }
-
-    await Promise.allSettled(Object.keys(pluginRepositories).map(async repo => {
-        if (repo !== OFFICIAL_PLUGINS_REPO_URL) {
-            await updateRepository(repo);
-        }
-    }));
-}
-
 export async function updatePlugins() {
     await awaitStorage(pluginRepositories, pluginSettings);
 
@@ -380,7 +338,6 @@ export async function updatePlugins() {
         corePluginInstances.set(id, instance);
     }
 
-    await updateAllRepository();
 }
 
 /**
