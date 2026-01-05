@@ -43,7 +43,10 @@ function PluginPage(props: PluginPageProps) {
         ]}
         sortOptions={{
             "Name (A-Z)": (a, b) => a.name.localeCompare(b.name),
-            "Name (Z-A)": (a, b) => b.name.localeCompare(a.name)
+            "Name (Z-A)": (a, b) => b.name.localeCompare(a.name),
+            "Enabled": (a, b) => Number(b.isEnabled()) - Number(a.isEnabled()),
+            "Disabled": (a, b) => Number(a.isEnabled()) - Number(b.isEnabled())
+
         }}
         safeModeHint={{ message: Strings.SAFE_MODE_NOTICE_PLUGINS }}
         items={items}
@@ -117,7 +120,7 @@ export default function Plugins() {
                         actions={<AlertActions>
                             <AlertActionButton text="Continue" variant="primary" onPress={() => {
                                 VdPluginManager.installPlugin(url)
-                                    .then(() => showToast(Strings.TOASTS_INSTALLED_PLUGIN, findAssetId("Check")))
+                                    .then(() => showToast(Strings.TOASTS_INSTALLED_PLUGIN, findAssetId("DownloadIcon")))
                                     .catch(e => openAlert("bunny-plugin-install-failed", <AlertModal
                                         title="Install Failed"
                                         content={`Unable to install plugin from '${url}':`}

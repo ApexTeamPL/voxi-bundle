@@ -206,39 +206,30 @@ function BrowserPage() {
 function AddRepositoryAlert() {
   const [value, setValue] = useState("");
 
-  return (
-    <AlertModal
-      title="Add Repository"
-      content="Enter the URL of the repository you want to add."
-      extraContent={
-        <TextInput
-          value={value}
-          onChange={setValue}
-          placeholder="https://example.com/repo.json"
-        />
-      }
-      actions={
-        <AlertActions>
-          <AlertActionButton
-            text="Add"
-            variant="primary"
-            disabled={!isValidHttpUrl(value)}
-            onPress={async () => {
-              try {
-                await updateRepository(value);
-                showToast("Added repository!", findAssetId("Check"));
-              } catch (e) {
-                showToast("Failed to add repository!", findAssetId("Small"));
-              } finally {
-                dismissAlert("bunny-add-plugin-repository");
-                showSheet("plugin-browser-options", PluginBrowserOptions);
-              }
-            }}
-          />
-        </AlertActions>
-      }
-    />
-  );
+    return <AlertModal
+        title="Add Repository"
+        content="Enter the URL of the repository you want to add."
+        extraContent={<TextInput
+            value={value}
+            onChange={setValue}
+            placeholder="https://example.com/repo.json" />}
+        actions={<AlertActions>
+            <AlertActionButton
+                text="Add"
+                variant="primary"
+                disabled={!isValidHttpUrl(value)}
+                onPress={async () => {
+                    try {
+                        await updateRepository(value);
+                        showToast("Added repository!", findAssetId("CheckmarkSmallIcon"));
+                    } catch (e) {
+                        showToast("Failed to add repository!", findAssetId("XSmallIcon"));
+                    } finally {
+                        dismissAlert("bunny-add-plugin-repository");
+                        showSheet("plugin-browser-options", PluginBrowserOptions);
+                    }
+                }} />
+        </AlertActions>} />;
 }
 
 function PluginBrowserOptions() {
