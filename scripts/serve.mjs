@@ -19,7 +19,7 @@ export function serve(options) {
         const { pathname } = url.parse(req.url || "", true);
         if (pathname?.endsWith(".js")) {
             try {
-                const { config, context, timeTook } = await buildBundle();
+                const { config, context, timeTook } = await buildBundle({}, true);
 
                 printBuildSuccess(
                     context.hash,
@@ -41,7 +41,7 @@ export function serve(options) {
 
     server.listen(args.port ?? 4040);
 
-    console.info(chalk.bold.yellowBright("Serving Vencore bundle, available on:"));
+    console.info(chalk.bold.yellowBright("Serving Voxi bundle, available on:"));
 
     const netInterfaces = os.networkInterfaces();
     for (const netinterfaces of Object.values(netInterfaces)) {

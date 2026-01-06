@@ -26,11 +26,11 @@ export default function General() {
                     <TableRow
                         label={Strings.BUNNY}
                         icon={<TableRow.Icon source={{ uri: PyoncordIcon }} />}
-                        trailing={<TableRow.TrailingText text={`1.4.0-3 DEV ${debugInfo.bunny.version}`} />}
+                        trailing={<TableRow.TrailingText text={debugInfo.bunny.version} />}
                     />
                     <TableRow
                         label={"Discord"}
-                        icon={<TableRow.Icon source={findAssetId("Discord")!} />}
+                        icon={<TableRow.Icon source={findAssetId("ClydeIcon")!} />}
                         trailing={<TableRow.TrailingText text={`${debugInfo.discord.version} (${debugInfo.discord.build})`} />}
                     />
                     <TableRow
@@ -47,7 +47,7 @@ export default function General() {
                     <TableRow
                         arrow={true}
                         label={Strings.DISCORD_SERVER}
-                        icon={<TableRow.Icon source={findAssetId("Discord")!} />}
+                        icon={<TableRow.Icon source={findAssetId("ClydeIcon")!} />}
                         onPress={() => Linking.openURL(DISCORD_SERVER)}
                     />
                     <TableRow

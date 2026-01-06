@@ -14,13 +14,13 @@ export default function About() {
     const versions = [
         {
             label: Strings.BUNNY,
-            version: `1.4.0-3 DEV ${debugInfo.bunny.version}`,
+            version: `${debugInfo.discord.version} (${debugInfo.discord.build})`,
             icon: { uri: PyoncordIcon },
         },
         {
             label: "Discord",
             version: `${debugInfo.discord.version} (${debugInfo.discord.build})`,
-            icon: "Discord",
+            icon: "ClydeIcon",
         },
         {
             label: "React",
@@ -63,7 +63,7 @@ export default function About() {
         {
             label: Strings.BRAND,
             version: debugInfo.device.brand,
-            icon: "MagicWandIcon"
+            icon: "PencilSparkleIcon"
         },
         {
             label: Strings.MODEL,

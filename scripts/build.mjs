@@ -5,12 +5,12 @@ import { execFileSync, execSync } from "child_process";
 import crypto from "crypto";
 import { build } from "esbuild";
 import globalPlugin from "esbuild-plugin-globals";
+import { readFile } from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
 import yargs from "yargs-parser";
 
 import { printBuildSuccess } from "./util.mjs";
-import { readFile } from "fs/promises";
 
 /** @type string[] */
 const metroDeps = await (async () => {
@@ -31,20 +31,23 @@ let context = null;
 const config = {
     entryPoints: ["src/entry.ts"],
     bundle: true,
-    outfile: "dist/vencore.js",
+    outfile: "dist/voxi.js",
     format: "iife",
     splitting: false,
-    external: [],
+    external: [
+        "node:*"
+    ],
     supported: {
         // Hermes does not actually support const and let, even though it syntactically
         // accepts it, but it's treated just like 'var' and causes issues
         "const-and-let": false
     },
     footer: {
-        js: "//# sourceURL=vencore"
+        js: "//# sourceURL=voxi"
     },
     loader: {
-        ".png": "dataurl"
+        ".png": "dataurl",
+        ".html": "text"
     },
     define: {
         window: "globalThis",
@@ -75,7 +78,7 @@ const config = {
                                 constModules: {
                                     globals: {
                                         "bunny-build-info": {
-                                            version: `"${context.hash}-${releaseBranch ?? "local"}"`
+                                            version: `"v1.4.1 ${releaseBranch ?? "local"}"`
                                         }
                                     }
                                 },
@@ -114,7 +117,7 @@ const config = {
     ]
 };
 
-export async function buildBundle(overrideConfig = {}) {
+export async function buildBundle(overrideConfig = {}, skipHermes) {
     context = {
         hash: releaseBranch ? execSync("git rev-parse --short HEAD").toString().trim() : crypto.randomBytes(8).toString("hex").slice(0, 7)
     };
@@ -122,24 +125,26 @@ export async function buildBundle(overrideConfig = {}) {
     const initialStartTime = performance.now();
     await build({ ...config, ...overrideConfig });
 
-    const paths = {
-        win32: 'win64-bin/hermesc.exe',
-        darwin: 'osx-bin/hermesc',
-        linux: 'linux64-bin/hermesc',
+    if (!skipHermes) {
+        const paths = {
+            win32: "win64-bin/hermesc.exe",
+            darwin: "osx-bin/hermesc",
+            linux: "linux64-bin/hermesc",
+        };
+
+        if (!(process.platform in paths))
+            throw new Error(`Unsupported platform: ${process.platform}`);
+
+        const sdksDir = "./node_modules/react-native/sdks";
+        const binPath = `${sdksDir}/hermesc/${paths[process.platform]}`;
+
+        const actualFile = overrideConfig.outfile ?? config.outfile;
+
+        execFileSync(binPath, ["-finline", "-strict", "-O", "-g1", "-reuse-prop-cache", "-optimized-eval", "-emit-binary", "-Wno-undefined-variable", "-out", actualFile], {
+            input: await readFile(actualFile),
+            stdio: "pipe"
+        });
     }
-
-    if (!(process.platform in paths))
-        throw new Error(`Unsupported platform: ${process.platform}`)
-
-    const sdksDir = './node_modules/react-native/sdks'
-    const binPath = `${sdksDir}/hermesc/${paths[process.platform]}`
-
-    const actualFile = overrideConfig.outfile ?? config.outfile;
-
-    execFileSync(binPath, ['-finline', '-strict', '-O', '-g1', '-reuse-prop-cache', '-optimized-eval', '-emit-binary', '-Wno-undefined-variable', '-out', actualFile], {
-        input: await readFile(actualFile),
-        stdio: 'pipe'
-    });
 
     return {
         config,
