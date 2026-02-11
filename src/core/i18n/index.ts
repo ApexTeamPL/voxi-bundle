@@ -3,6 +3,8 @@ import { findByNameLazy } from "@metro/wrappers";
 import { PrimitiveType } from "intl-messageformat";
 
 import langDefault from "./default.json";
+import langEs from "./es.json";
+import langEs419 from "./es_419.json";
 
 const IntlMessageFormat = findByNameLazy("MessageFormat") as typeof import("intl-messageformat").default;
 
@@ -13,6 +15,12 @@ let _lastSetLocale: string | null = null;
 
 const _loadedLocale = new Set<string>();
 const _loadedStrings = {} as Record<string, typeof langDefault>;
+
+// Pre-load local translations
+const localTranslations = {
+    "es": langEs,
+    "es_419": langEs419
+} as Record<string, typeof langDefault>;
 
 export const Strings = new Proxy({}, {
     get: (_t, prop: keyof typeof langDefault) => {
@@ -45,11 +53,26 @@ export function initFetchI18nStrings() {
         if (!_loadedLocale.has(resolvedLocale)) {
             _loadedLocale.add(resolvedLocale);
 
+            // Check if we have a local translation first
+            if (localTranslations[resolvedLocale]) {
+                _loadedStrings[resolvedLocale] = localTranslations[resolvedLocale];
+                _currentLocale = resolvedLocale;
+                return;
+            }
+
+            // Fallback to external fetch
             fetch(`https://raw.githubusercontent.com/pyoncord/i18n/main/resources/${resolvedLocale}/bunny.json`)
                 .then(r => r.json())
                 .then(strings => _loadedStrings[resolvedLocale] = strings)
                 .then(() => resolvedLocale === _lastSetLocale && (_currentLocale = resolvedLocale))
-                .catch(e => console.error(`An error occured while fetching strings for ${resolvedLocale}: ${e}`));
+                .catch(e => {
+                    console.error(`An error occured while fetching strings for ${resolvedLocale}: ${e}`);
+                    // If external fetch fails and we have local translations, use them
+                    if (localTranslations[resolvedLocale]) {
+                        _loadedStrings[resolvedLocale] = localTranslations[resolvedLocale];
+                        _currentLocale = resolvedLocale;
+                    }
+                });
         } else {
             _currentLocale = resolvedLocale;
         }
